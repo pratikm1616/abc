@@ -1,0 +1,105 @@
+## 1️⃣ Create Custom Exception Class
+
+⁠ csharp
+using System;
+
+class AgeNotValidException : Exception
+{
+    public AgeNotValidException()
+    {
+    }
+
+    public AgeNotValidException(string message) : base(message)
+    {
+    }
+}
+ ⁠
+
+---
+
+## 2️⃣ Use Custom Exception
+
+⁠ csharp
+using System;
+
+class Program
+{
+    static void ValidateAge(int age)
+    {
+        if (age < 18)
+        {
+            throw new AgeNotValidException("Age must be 18 or above");
+        }
+        else
+        {
+            Console.WriteLine("Age is valid");
+        }
+    }
+
+    static void Main()
+    {
+        try
+        {
+            ValidateAge(15);
+        }
+        catch (AgeNotValidException ex)
+        {
+            Console.WriteLine("Custom Exception Caught: " + ex.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("General Exception: " + ex.Message);
+        }
+    }
+}
+ ⁠
+
+---
+
+## 🖨️ Output
+
+
+Custom Exception Caught: Age must be 18 or above
+
+
+---
+
+## 🔑 Key Interview Points
+
+•⁠  ⁠Custom exception *inherits from ⁠ Exception ⁠*
+•⁠  ⁠⁠ throw ⁠ keyword is used to raise exception
+•⁠  ⁠⁠ catch ⁠ is used to handle it
+•⁠  ⁠Used for *business rule validation*
+•⁠  ⁠Naming convention: ⁠ Exception ⁠ suffix is mandatory
+
+---
+
+## 🔸 Shorter Custom Exception (Most Common)
+
+⁠ csharp
+class BalanceLowException : Exception
+{
+    public BalanceLowException(string msg) : base(msg) { }
+}
+ ⁠
+
+---
+
+## 🔸 Real-Time Example (Bank)
+
+⁠ csharp
+class InsufficientBalanceException : Exception
+{
+    public InsufficientBalanceException(string msg) : base(msg) { }
+}
+
+class Bank
+{
+    public void Withdraw(int amount)
+    {
+        int balance = 5000;
+        if (amount > balance)
+            throw new InsufficientBalanceException("Not enough balance");
+    }
+}
+ ⁠
