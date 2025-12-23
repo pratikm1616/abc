@@ -7,6 +7,9 @@ version 8.0
 
 Project Name: StudentManagementSystem
 
+===========================================================================================================================================================================
+
+
 STEP 2: Install Required NuGet Packages
 
 Open Tools → NuGet Package Manager → Package Manager Console
@@ -19,8 +22,10 @@ Install-Package Microsoft.EntityFrameworkCore.Tools
 🔹 STEP 3: Create MODEL (Student)
 
 📁 Folder: Models
-
 📄 Models/Student.cs
+
+
+
 using System.ComponentModel.DataAnnotations;
 
 namespace StudentManagementSystem.Models
@@ -47,8 +52,9 @@ namespace StudentManagementSystem.Models
 🔹 STEP 4: Create DbContext (Database Connection Class)
 
 📁 Create folder: Data
-
 📄 Data/AppDbContext.cs
+
+
 using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Models;
 
