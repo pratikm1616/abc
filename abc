@@ -1,3 +1,112 @@
+using System;
+using System.Collections;
+
+class Program
+{
+    static void Main()
+    {
+        ArrayList list = new ArrayList();
+        int choice;
+
+        do
+        {
+            Console.WriteLine("\n===== MENU =====");
+            Console.WriteLine("1. Add Element");
+            Console.WriteLine("2. Display Elements");
+            Console.WriteLine("3. Search Element");
+            Console.WriteLine("4. Remove Element");
+            Console.WriteLine("5. Count Elements");
+            Console.WriteLine("6. Exit");
+            Console.Write("Enter your choice: ");
+
+            choice = Convert.ToInt32(Console.ReadLine());
+
+            switch (choice)
+            {
+                case 1: // Add
+                    Console.Write("Enter element to add: ");
+                    string item = Console.ReadLine();
+                    list.Add(item);
+                    Console.WriteLine("Element added successfully.");
+                    break;
+
+                case 2: // Display
+                    Console.WriteLine("\nArrayList Elements:");
+                    if (list.Count == 0)
+                    {
+                        Console.WriteLine("List is empty.");
+                    }
+                    else
+                    {
+                        foreach (var obj in list)
+                        {
+                            Console.WriteLine(obj);
+                        }
+                    }
+                    break;
+
+                case 3: // Search
+                    Console.Write("Enter element to search: ");
+                    string search = Console.ReadLine();
+
+                    if (list.Contains(search))
+                        Console.WriteLine("Element found.");
+                    else
+                        Console.WriteLine("Element not found.");
+                    break;
+
+                case 4: // Remove
+                    Console.Write("Enter element to remove: ");
+                    string remove = Console.ReadLine();
+
+                    if (list.Contains(remove))
+                    {
+                        list.Remove(remove);
+                        Console.WriteLine("Element removed.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Element not found.");
+                    }
+                    break;
+
+                case 5: // Count
+                    Console.WriteLine("Total elements: " + list.Count);
+                    break;
+
+                case 6: // Exit
+                    Console.WriteLine("Exiting program...");
+                    break;
+
+                default:
+                    Console.WriteLine("Invalid choice!");
+                    break;
+            }
+
+        } while (choice != 6);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+===========================================================================================================================================================================
+
+
+
+
+
+
 STEP 1: Create ASP.NET Core MVC Project
 Open Visual Studio
 
