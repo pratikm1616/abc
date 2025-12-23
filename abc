@@ -1,0 +1,289 @@
+STEP 1: Create ASP.NET Core MVC Project
+Open Visual Studio
+
+Click Create a new project
+Select ASP.NET Core Web App (Model-View-Controller)
+version 8.0
+
+Project Name: StudentManagementSystem
+
+STEP 2: Install Required NuGet Packages
+
+Open Tools → NuGet Package Manager → Package Manager Console
+
+Install-Package Microsoft.EntityFrameworkCore.SqlServer
+Install-Package Microsoft.EntityFrameworkCore.Tools
+
+===========================================================================================================================================================================
+
+🔹 STEP 3: Create MODEL (Student)
+
+📁 Folder: Models
+
+📄 Models/Student.cs
+using System.ComponentModel.DataAnnotations;
+
+namespace StudentManagementSystem.Models
+{
+    public class Student
+    {
+        [Key]
+        public int StudentId { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
+        [Required]
+        public string Email { get; set; }
+
+        public string Course { get; set; }
+
+        public int Age { get; set; }
+    }
+}
+
+===========================================================================================================================================================================
+
+🔹 STEP 4: Create DbContext (Database Connection Class)
+
+📁 Create folder: Data
+
+📄 Data/AppDbContext.cs
+using Microsoft.EntityFrameworkCore;
+using StudentManagementSystem.Models;
+
+namespace StudentManagementSystem.Data
+{
+    public class AppDbContext : DbContext
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+            : base(options)
+        {
+        }
+
+        public DbSet<Student> Students { get; set; }
+    }
+}
+
+===========================================================================================================================================================================
+
+🔹 STEP 5: Configure Database Connection
+📄 appsettings.json
+
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=StudentDB;Trusted_Connection=True;TrustServerCertificate=True;"
+  }
+}
+===========================================================================================================================================================================
+
+🔹 STEP 6: Register DbContext (Program.cs)
+
+using Microsoft.EntityFrameworkCore;
+using StudentManagementSystem.Data;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// ADD DB CONTEXT
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddControllersWithViews();
+
+var app = builder.Build();
+
+app.UseStaticFiles();
+app.UseRouting();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Student}/{action=Index}/{id?}");
+
+app.Run();
+===========================================================================================================================================================================
+
+🔹 STEP 7: Create Database Using Migration
+
+Open Package Manager Console
+
+Add-Migration InitialCreate
+Update-Database
+
+===========================================================================================================================================================================
+
+🔹 STEP 8: Create CONTROLLER
+
+📁 Controllers
+
+📄 Controllers/StudentController.cs
+using Microsoft.AspNetCore.Mvc;
+using StudentManagementSystem.Data;
+using StudentManagementSystem.Models;
+
+namespace StudentManagementSystem.Controllers
+{
+    public class StudentController : Controller
+    {
+        private readonly AppDbContext _context;
+
+        public StudentController(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        // READ
+        public IActionResult Index()
+        {
+            return View(_context.Students.ToList());
+        }
+
+        // CREATE (GET)
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // CREATE (POST)
+        [HttpPost]
+        public IActionResult Create(Student student)
+        {
+            _context.Students.Add(student);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        // EDIT (GET)
+        public IActionResult Edit(int id)
+        {
+            var student = _context.Students.Find(id);
+            return View(student);
+        }
+
+        // EDIT (POST)
+        [HttpPost]
+        public IActionResult Edit(Student student)
+        {
+            _context.Students.Update(student);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        // DELETE (GET)
+        public IActionResult Delete(int id)
+        {
+            var student = _context.Students.Find(id);
+            return View(student);
+        }
+
+        // DELETE (POST)
+        [HttpPost]
+        public IActionResult DeleteConfirmed(int studentId)
+        {
+            var student = _context.Students.Find(studentId);
+            _context.Students.Remove(student);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+    }
+}
+
+🔹 STEP 9: Create VIEWS
+
+📁 Views → Student
+
+📄 Views/Student/Index.cshtml
+@model IEnumerable<StudentManagementSystem.Models.Student>
+
+<h2>Student List</h2>
+<a asp-action="Create">Add Student</a>
+
+<table border="1">
+    <tr>
+        <th>ID</th><th>Name</th><th>Email</th>
+        <th>Course</th><th>Age</th><th>Action</th>
+    </tr>
+
+@foreach (var s in Model)
+{
+    <tr>
+        <td>@s.StudentId</td>
+        <td>@s.Name</td>
+        <td>@s.Email</td>
+        <td>@s.Course</td>
+        <td>@s.Age</td>
+        <td>
+            <a asp-action="Edit" asp-route-id="@s.StudentId">Edit</a> |
+            <a asp-action="Delete" asp-route-id="@s.StudentId">Delete</a>
+        </td>
+    </tr>
+}
+</table>
+
+📄 Views/Student/Create.cshtml
+@model StudentManagementSystem.Models.Student
+
+<h2>Add Student</h2>
+
+<form asp-action="Create" method="post">
+    Name: <input asp-for="Name" /><br />
+    Email: <input asp-for="Email" /><br />
+    Course: <input asp-for="Course" /><br />
+    Age: <input asp-for="Age" /><br /><br />
+    <button type="submit">Save</button>
+</form>
+
+📄 Views/Student/Edit.cshtml
+@model StudentManagementSystem.Models.Student
+
+<h2>Edit Student</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="StudentId" />
+    Name: <input asp-for="Name" /><br />
+    Email: <input asp-for="Email" /><br />
+    Course: <input asp-for="Course" /><br />
+    Age: <input asp-for="Age" /><br /><br />
+    <button type="submit">Update</button>
+</form>
+
+📄 Views/Student/Delete.cshtml
+@model StudentManagementSystem.Models.Student
+
+<h2>Delete Student</h2>
+
+<p>Are you sure you want to delete <b>@Model.Name</b>?</p>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" name="studentId" value="@Model.StudentId" />
+    <button type="submit">Delete</button>
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+================================================================================================================================================================================================================================================
