@@ -1,0 +1,47 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+// Product class
+class Product
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public double Price { get; set; }
+
+    public Product(int id, string name, double price)
+    {
+        Id = id;
+        Name = name;
+        Price = price;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Product list
+        List<Product> products = new List<Product>()
+        {
+            new Product(1, "Laptop", 55000),
+            new Product(2, "Mouse", 500),
+            new Product(3, "Keyboard", 1200),
+            new Product(4, "Monitor", 8000),
+            new Product(5, "Pen", 50)
+        };
+
+        // LINQ Query
+        var result = products
+                     .Where(p => p.Price > 1000)          // Filter
+                     .OrderByDescending(p => p.Price)     // Sort DESC
+                     .Select(p => new { p.Name, p.Price });// Display Name & Price
+
+        // Output
+        Console.WriteLine("Products with price > 1000 (Descending Order):");
+        foreach (var item in result)
+        {
+            Console.WriteLine($"Product: {item.Name}, Price: {item.Price}");
+        }
+    }
+}
